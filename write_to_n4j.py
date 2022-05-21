@@ -40,7 +40,7 @@ def add_to_graph(
 
         nn = dotdict({
             # preorder=preorder,
-            "ts_id": cur_node.id,
+            "id": cur_node.id,
             "named": cur_node.is_named,
             "type": cur_node.type,
         })
@@ -55,7 +55,7 @@ def add_to_graph(
 
         log.debug(f"adding node {preorder}: {nn}")
         # insert node and it's data
-        node = G.add_node(preorder, **nn)
+        node = G.add_node(preorder, attr_dict=nn)
         if not first_node:
             first_node = node
 
