@@ -40,9 +40,9 @@ def add_to_graph(
 
         nn = dotdict({
             # preorder=preorder,
+            "type": cur_node.type,
             "id": cur_node.id,
             "named": cur_node.is_named,
-            "type": cur_node.type,
         })
         (nn.x1,nn.y1) = cur_node.start_point
         (nn.x2,nn.y2) = cur_node.end_point
