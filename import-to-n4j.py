@@ -6,6 +6,7 @@ import tempfile
 import argparse
 
 from write_to_n4j import *
+import nxneo4j as nx
 
 
 def main():

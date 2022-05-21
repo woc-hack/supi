@@ -14,7 +14,7 @@ from wsyntree.wrap_tree_sitter import TreeSitterAutoBuiltLanguage, TreeSitterCur
 def add_to_graph(
         lang: TreeSitterAutoBuiltLanguage,
         file: Path,
-        G: 'nx.DiGraph',
+        G,
         only_named_nodes: bool = False,
         include_text: bool = False,
     ):
