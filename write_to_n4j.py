@@ -40,7 +40,7 @@ def add_to_graph(
 
         nn = dotdict({
             # preorder=preorder,
-            "id": cur_node.id,
+            "ts_id": cur_node.id,
             "named": cur_node.is_named,
             "type": cur_node.type,
         })
