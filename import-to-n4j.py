@@ -5,8 +5,9 @@ from pathlib import Path
 import tempfile
 import argparse
 
+from wsyntree_collector.file.parse_file_treesitter import build_networkx_graph
 from write_to_n4j import *
-import nxneo4j as nx
+import networkx as nx
 
 
 def main():
@@ -30,14 +31,12 @@ def main():
         print(f"Stored blob {blob} content to {codepath}, from source {args.filepath}")
         f.write(blob.data)
     
-    driver = GraphDatabase.driver(uri="bolt://localhost")
-    G = nx.DiGraph(driver)
+    outfile = Path(f"data/{args.blob}.graphml")
 
-    _, code_node = add_to_graph(
-        lang, codepath, G
-    )
+    G = build_networkx_graph(lang, codepath, include_text=True)
+    nx.write_graphml(G, outfile)
 
-    print(f"Done adding, first node: {code_node}")
+    print(f"File {outfile} written.")
 
 if __name__ == "__main__":
     main()
