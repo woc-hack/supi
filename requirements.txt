@@ -1,0 +1,5 @@
+ipython-cypher
+orjson>=3.0.0
+networkx[default]
+tree_sitter@git+https://github.com/utk-se/py-tree-sitter.git@master#egg=tree_sitter
+
