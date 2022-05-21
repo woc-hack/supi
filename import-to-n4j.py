@@ -33,7 +33,7 @@ def main():
     G = nx.DiGraph(driver)
 
     _, code_node = add_to_graph(
-        lang, codepath, G, start_node
+        lang, codepath, G
     )
 
     print(f"Done adding, first node: {code_node}")

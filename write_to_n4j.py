@@ -15,7 +15,6 @@ def add_to_graph(
         lang: TreeSitterAutoBuiltLanguage,
         file: Path,
         G: 'nx.DiGraph',
-        start_node,
         only_named_nodes: bool = False,
         include_text: bool = False,
     ):
