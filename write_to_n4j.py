@@ -55,7 +55,7 @@ def add_to_graph(
 
         log.debug(f"adding node {preorder}: {nn}")
         # insert node and it's data
-        node = G.add_node(preorder, nn)
+        node = G.add_node(preorder, **nn)
         if not first_node:
             first_node = node
 
