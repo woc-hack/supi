@@ -36,6 +36,8 @@ def main():
     G = build_networkx_graph(lang, codepath, include_text=True)
     nx.write_graphml(G, outfile)
 
+    codepath.unlink()
+
     print(f"File {outfile} written.")
 
 if __name__ == "__main__":
