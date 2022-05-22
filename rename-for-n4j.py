@@ -23,7 +23,7 @@ def modify_graphml(farg):
     except xml.etree.ElementTree.ParseError as e:
         log.error(e)
         return "skipped"
-    nx.relabel_nodes(ingraph, lambda x: f"{prefix}-{x}", copy=False) # inplace
+    nx.relabel_nodes(ingraph, lambda x: f"{infile.stem}-{x}", copy=False) # inplace
     nx.set_node_attributes(ingraph, infile.stem, "blob")
     types = nx.get_node_attributes(ingraph, "type")
     types = {k: f":{v}" if ingraph.nodes[k]['named']==True else ":unnamed" for k, v in list(types.items())}
