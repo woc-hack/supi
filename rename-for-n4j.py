@@ -16,7 +16,6 @@ from concurrent.futures import TimeoutError
 
 def modify_graphml(farg):
     infile, args = farg
-    prefix = infile.stem
     log.info(f"Processing {args.prefix / infile}")
     # insecure
     try:
@@ -25,11 +24,11 @@ def modify_graphml(farg):
         log.error(e)
         return "skipped"
     nx.relabel_nodes(ingraph, lambda x: f"{prefix}-{x}", copy=False) # inplace
-    nx.set_node_attributes(ingraph, prefix, "blob")
+    nx.set_node_attributes(ingraph, infile.stem, "blob")
     types = nx.get_node_attributes(ingraph, "type")
     types = {k: f":{v}" if ingraph.nodes[k]['named']==True else ":unnamed" for k, v in list(types.items())}
     nx.set_node_attributes(ingraph, types, "labels")
-    nx.write_graphml(ingraph, args.outpath / (infile.stem + ".graphml"), named_key_ids=False)
+    nx.write_graphml(ingraph, args.outpath / (infile.stem + ".graphml"), named_key_ids=True)
 
 def main():
     parser = argparse.ArgumentParser()

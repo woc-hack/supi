@@ -10,8 +10,9 @@ from wsyntree import log
 from wsyntree_collector.file.parse_file_treesitter import build_networkx_graph
 
 def n4j_apoc_graphml_import(tx, filepath):
+    # https://github.com/neo4j-contrib/neo4j-apoc-procedures/issues/2659
     tx.run(
-            "CALL apoc.import.graphml(\"file://" + str(filepath) + "\", {readLabels: true, storeNodeIds: true})",
+        "CALL apoc.import.graphml(\"file://" + str(filepath) + "\", {readLabels: false})",
     )
 
 def main():
