@@ -38,7 +38,7 @@ def main():
         types = nx.get_node_attributes(ingraph, "type")
         types = {k: f":{v}" if ingraph.nodes[k]['named']==True else "" for k, v in types.items()}
         nx.set_node_attributes(ingraph, types, "labels")
-        nx.write_graphml(ingraph, args.outpath / (infile.stem + ".graphml"), named_key_ids=True, prettyprint=False)
+        nx.write_graphml(ingraph, args.outpath / (infile.stem + ".graphml"), named_key_ids=True)
 
     log.info(f"Total: {len(args.infile)}")
 
