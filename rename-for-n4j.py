@@ -9,10 +9,27 @@ import nxneo4j
 from wsyntree import log
 from wsyntree_collector.file.parse_file_treesitter import build_networkx_graph
 
-def n4j_apoc_graphml_import(tx, filepath, commit):
-    tx.run(
-        ""
-    )
+from pebble import ProcessPool
+from multiprocessing import cpu_count
+from concurrent.futures import TimeoutError
+
+
+def modify_graphml(farg):
+    infile, args = farg
+    prefix = infile.stem
+    log.info(f"Processing {args.prefix / infile}")
+    # insecure
+    try:
+        ingraph = nx.read_graphml(args.prefix / infile)
+    except xml.etree.ElementTree.ParseError as e:
+        log.error(e)
+        return "skipped"
+    nx.relabel_nodes(ingraph, lambda x: f"{prefix}-{x}", copy=False) # inplace
+    nx.set_node_attributes(ingraph, prefix, "blob")
+    types = nx.get_node_attributes(ingraph, "type")
+    types = {k: f":{v}" if ingraph.nodes[k]['named']==True else ":unnamed" for k, v in list(types.items())}
+    nx.set_node_attributes(ingraph, types, "labels")
+    nx.write_graphml(ingraph, args.outpath / (infile.stem + ".graphml"), named_key_ids=False)
 
 def main():
     parser = argparse.ArgumentParser()
@@ -22,25 +39,22 @@ def main():
 
     args = parser.parse_args()
 
-    driver = GraphDatabase.driver(uri="bolt://localhost:9787")
+    with ProcessPool(max_workers=cpu_count()) as pool:
+        future = pool.map(
+                modify_graphml,
+                [ (infile, args) for infile in args.infile],
+                chunksize=64,
+                timeout=300
+        )
 
-    for infile in args.infile:
-        prefix = infile.stem
-        print(f"Processing {args.prefix / infile} (prefix {prefix})")
-        # insecure
-        try:
-            ingraph = nx.read_graphml(args.prefix / infile)
-        except xml.etree.ElementTree.ParseError as e:
-            log.error(e)
-            continue
-        nx.relabel_nodes(ingraph, lambda x: f"{prefix}_{x}", copy=False) # inplace
-        nx.set_node_attributes(ingraph, prefix, "blob")
-        types = nx.get_node_attributes(ingraph, "type")
-        types = {k: f":{v}" if ingraph.nodes[k]['named']==True else ":unnamed" for k, v in types.items()}
-        nx.set_node_attributes(ingraph, types, "labels")
-        nx.write_graphml(ingraph, args.outpath / (infile.stem + ".graphml"), named_key_ids=True)
+        results = future.result()
 
-    log.info(f"Total: {len(args.infile)}")
+    for r in results:
+        if isinstance(r, Exception):
+            log.err(r)
+            raise r
+
+    log.info(f"Total: {len(list(results))}")
 
 if __name__ == "__main__":
     main()
