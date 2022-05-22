@@ -36,9 +36,9 @@ def main():
         nx.relabel_nodes(ingraph, lambda x: f"{prefix}_{x}", copy=False) # inplace
         nx.set_node_attributes(ingraph, prefix, "blob")
         types = nx.get_node_attributes(ingraph, "type")
-        types = {k: f":{v}" for k, v in types.items()}
+        types = {k: f":{v}" if ingraph.nodes[k]['named']==True else "" for k, v in types.items()}
         nx.set_node_attributes(ingraph, types, "labels")
-        nx.write_graphml(ingraph, args.outpath / (infile.stem + ".graphml") )
+        nx.write_graphml(ingraph, args.outpath / (infile.stem + ".graphml"), named_key_ids=True, prettyprint=False)
 
     log.info(f"Total: {len(args.infile)}")
 
